@@ -13,7 +13,7 @@ const Order = ({order}) => {
                         <p> { buyer_full_name } </p>
                     </div>
                     <div className="acciones">
-                        <a href="#" className="btn btn-azul">
+                        <a href="/" className="btn btn-azul">
                             <i className="fas fa-pen-alt"></i>
                             Editar Cliente
                         </a>

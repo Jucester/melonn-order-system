@@ -1,54 +1,73 @@
-{
-    "orders": [
-        {
-            "id": 1,
-            "seller_store": "Store 1",
-            "shipping_method": 1,
-            "external_order_number": 1,
-            "buyer_full_name": "Gabriel Lopez",
-            "buyer_phone_number": "+57 3129321234",
-            "buyer_email": "gabo_lopez@gmail.com",
-            "shipping_address": "Medellin, Casa A-5",
-            "shipping_city": "Medellin",
-            "shipping_region": "Region de Medellin",
-            "shippng_country": "Colombia",
-            "line_items": [
-                {
-                    "product_name": "product 1",
-                    "product_qty": "qty 1",
-                    "product_weight": 12
-                },
-                {
-                    "product_name": "product 2",
-                    "product_qty": "qty 2",
-                    "product_weight": 9
-                }
-            ]
-        },
-        {
-            "id": 2,
-            "seller_store": "Store 2",
-            "shipping_method": 2,
-            "external_order_number": 2,
-            "buyer_full_name": "Miguel Uzcategui",
-            "buyer_phone_number": "+57 3141234567",
-            "buyer_email": "migue13@gmail.com",
-            "shipping_address": "Medellin, Barrio Uno, Casa 20",
-            "shipping_city": "Medellin",
-            "shipping_region": "Region de Medellin",
-            "shippng_country": "Colombia",
-            "line_items": [
-                {
-                    "product_name": "product 3",
-                    "product_qty": "qty 3",
-                    "product_weight": 15
-                },
-                {
-                    "product_name": "product 4",
-                    "product_qty": "qty 4",
-                    "product_weight": 5
-                }
-            ]
-        }
-    ]
-}
+[{
+    "id": 1,
+    "seller_store": "Store 1",
+    "shipping_method": 1,
+    "external_order_number": 1,
+    "buyer_full_name": "Gabriel Lopez",
+    "buyer_phone_number": "+57 3129321234",
+    "buyer_email": "gabo_lopez@gmail.com",
+    "shipping_address": "Medellin, Casa A-5",
+    "shipping_city": "Medellin",
+    "shipping_region": "Region de Medellin",
+    "shippng_country": "Colombia",
+    "line_items": [{
+        "product_name": "product 1",
+        "product_qty": "qty 1",
+        "product_weight": 12
+    }, {
+        "product_name": "product 2",
+        "product_qty": "qty 2",
+        "product_weight": 9
+    }]
+}, {
+    "seller_store": "El Gocho",
+    "shipping_method": "4",
+    "external_order_number": "3232323",
+    "buyer_full_name": "Jucel Dorante",
+    "buyer_phone_number": "+587456456",
+    "buyer_email": "juceld@gmail.com",
+    "shipping_address": "8 The Green",
+    "shipping_city": "Dover",
+    "shipping_region": "Delaware",
+    "shipping_country": "Estados Unidos",
+    "line_items": "fsfdsdf",
+    "date": "2021-03-17"
+}, {
+    "seller_store": "Bell",
+    "shipping_method": "1",
+    "external_order_number": "121221",
+    "buyer_full_name": "Jucel Dorante",
+    "buyer_phone_number": "+587456456",
+    "buyer_email": "juceld@gmail.com",
+    "shipping_address": "8 The Green, Suite A 19901",
+    "shipping_city": "Dover",
+    "shipping_region": "Delaware",
+    "shipping_country": "Estados Unidos",
+    "line_items": [{
+        "product_name": "Pro havit",
+        "product_qty": "12313123",
+        "product_weight": "12"
+    }, {
+        "product_name": "Glasses",
+        "product_qty": "423424",
+        "product_weight": "1"
+    }],
+    "date": "2021-03-17"
+}, {
+    "seller_store": "Vessada",
+    "shipping_method": "1",
+    "external_order_number": "58741",
+    "buyer_full_name": "Alexander Vessada",
+    "buyer_phone_number": "+5874545216",
+    "buyer_email": "contact@vessada.com",
+    "shipping_address": "8 The Green, Suite A 19901",
+    "shipping_city": "Dover",
+    "shipping_region": "Delaware",
+    "shipping_country": "Estados Unidos",
+    "line_items": [{
+        "product_name": "Pro havit",
+        "product_qty": "12313123",
+        "product_weight": "2"
+    }],
+    "date": "2021-03-17"
+}]

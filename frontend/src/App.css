@@ -343,6 +343,7 @@ form .campo label {
 }
 form .campo input:not([type="submit"]){
     padding: 1.5rem;
+    margin-right: 10px;
     flex: 1;
     border: 1px solid #e1e1e1;
 }
@@ -397,6 +398,18 @@ form .campo input[readonly] {
 }
 .fa-minus:hover,
 .fa-plus:hover {
+    cursor: pointer;
+}
+
+.fa-minus-square,
+.fa-plus-square {
+    color: var(--azul);
+    margin-right: 10px;
+    font-size: 40px;
+}
+
+.fa-minus-square,
+.fa-plus-square {
     cursor: pointer;
 }
 .contenedor-cantidad .fa-plus,
