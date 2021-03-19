@@ -103,7 +103,7 @@ controller.createOrder = async (req, res) => {
         }
 
         // if not repeated, then validate the data
-        let newOrder = { id: "MSE-" + (Date.now() + Math.floor(Math.random() * 101) + 1).toString(), ... req.body };
+        let newOrder = { id: "MSE-" + (Date.now() + Math.floor(Math.random() * 101) + 1).toString(), ... req.body, creation_date: creationDate };
 
         // 1. VALIDATE BASED ON WEIGHT AVAILABILITY: Calculating the weight and comparing with the rules
         let items = newOrder.line_items;
