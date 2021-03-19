@@ -7,8 +7,7 @@ App to Manage Orders made by Sellers
 This is a order management system that comunicates with the Melonn API to get details about
 the shipping methods. Sellers can place orders so their sells are handle by the logistic team.
 
-The app use json files as database (based on requirements) 
-
+The app use json files as database (based on requirements). It works but can make tests fail. 
 
 
 # Stack
