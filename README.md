@@ -32,14 +32,25 @@ git clone https://github.com/Jucester/melonn-order-system.git
 ### 2. Run backend
 
 ```
-npm run dev or npm start. The app runs by default in port 4000, you can change it in .env or in app.js
+First you need to make a .env file with this variables:
+
+MELONN_API_KEY=<Melonn api key>
+JWT_KEY=<secret key for JWT, can be whatever you want for review/testing purposes>
+PORT=<custom port. By default the backend is running on port 4000>
+
+Then run npm install to install all dependencies.
+
+After that, just run 'npm run dev' or 'npm start' in the backend folder. 
+The app by default is executed in port 4000, if you have set another port in the .env file then use
+http://localhost:<the port you defined>
 
 ```
 
 ### 3. Run frontend
 
 ```
-npm start. The connection with the backend is in the .env files. You can change the URL if is needed
+npm install and then npm start. The connection with the backend is in the .env files. You can change the URL if you
+defined another port in the backend.
 
 ```
 
