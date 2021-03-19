@@ -49,9 +49,8 @@ http://localhost:<the port you defined>
 ### 3. Run frontend
 
 ```
-npm install and then npm start. The connection with the backend is in the .env files. You can change the URL if you
-defined another port in the backend.
-
+make a .env file with the variable REACT_APP_BACKEND_URL, and set it to the baseURL of your backend, ej: "http://localhost:4000".
+Then npm install and npm start.
 ```
 
 Once both, backend and frontend are running, you just go to [http://localhost:3000](http://localhost:3000), and the API will be at [http://localhost:4000](http://localhost:4000). You can access with the default user credentials:
