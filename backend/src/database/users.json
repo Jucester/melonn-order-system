@@ -1,16 +1,11 @@
 [{
-    "id": "1616166665149",
-    "name": "Jucester",
-    "email": "jucester@email.com",
-    "password": "$2b$12$zyjSBpWkW240BHvPEW/A6.DcBtRwwqYJSNqn7nn58sjLyW3MXpRd6"
+    "id": "1616166676693",
+    "name": "admin",
+    "email": "admin@test.com",
+    "password": "$2b$12$B3YnwWptJQSAvCiRzuYSFe6A5r0k5hzSxA9JTuD3skUAEidQ0vX2i"
 }, {
     "id": "1616166670331",
     "name": "Ryan",
     "email": "ryan@test.com",
     "password": "$2b$12$aTeGjaccDIJiX0PbYK4Rges77ErkMs0AI3.q4dZ61ugEZPRQZXvi6"
-}, {
-    "id": "1616166676693",
-    "name": "admin",
-    "email": "admin@test.com",
-    "password": "$2b$12$B3YnwWptJQSAvCiRzuYSFe6A5r0k5hzSxA9JTuD3skUAEidQ0vX2i"
 }]

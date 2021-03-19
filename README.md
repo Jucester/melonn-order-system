@@ -54,6 +54,9 @@ defined another port in the backend.
 
 ```
 
-Once both, backend and frontend are running, you just go to [http://localhost:3000](http://localhost:3000), and the API will be at [http://localhost:4000](http://localhost:4000).
+Once both, backend and frontend are running, you just go to [http://localhost:3000](http://localhost:3000), and the API will be at [http://localhost:4000](http://localhost:4000). You can access with the default user credentials:
+
+email: admin@test.com
+password: admin 123
 
 Remember to modify the ports if you change it.
