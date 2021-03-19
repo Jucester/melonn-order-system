@@ -1,9 +1,13 @@
-import React, { Fragment, useState, useEffect } from "react";
+import React, { Fragment, useState, useEffect, useContext } from "react";
 import Swal from 'sweetalert2';
 import { withRouter } from 'react-router-dom';
 import clientAxios from "../../config/axios";
+import { AuthContext } from '../../context/AuthContext';
 
 const OrderCreation = ({ history }) => {
+
+  const [auth, saveAuth] = useContext(AuthContext);
+
   // This state is to dynamically add and save multiple line items
   const [productInputs, setProductInputs] = useState([
     {
@@ -40,6 +44,7 @@ const OrderCreation = ({ history }) => {
 
   // Order state that saves the data we will send to the server
   const [order, saveOrder] = useState({
+    user_id: auth.authenticatedUser.id,
     seller_store: "",
     shipping_method: "",
     external_order_number: "",
@@ -113,7 +118,11 @@ const OrderCreation = ({ history }) => {
     e.preventDefault();
     order.line_items = productInputs;
 
-    const res = await clientAxios.post("/orders", order);
+    const res = await clientAxios.post("/orders", order, {
+      headers: {
+        Authorization: `Bearer ${auth.token}`
+      }
+    });
     console.log(res);
 
     if (res.status === 201) {
@@ -127,6 +136,7 @@ const OrderCreation = ({ history }) => {
     } else {
       Swal.fire(
         {
+          icon: 'error',
           type: 'error',
           title: 'Error',
           text: res.data.message,
@@ -134,6 +144,10 @@ const OrderCreation = ({ history }) => {
       )
     }
   };
+
+  if (!auth.auth) {
+    history.push('/login');
+  }
 
   return (
     <Fragment>

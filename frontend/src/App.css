@@ -3,8 +3,8 @@
     --fontHeading: 'Staatliches', cursive;
 
     /** Colores **/
-    --azul : #00487C;
-    --rojo : #A01C48;
+    --azul : #002e4e;
+    --rojo : #a01c1c;
     --naranja : #F58549;
     --amarillo: #ECA400;
     --verde : rgb(20, 131, 20);
@@ -108,7 +108,7 @@ h3 {
 .btn:disabled {
     opacity: .4;
 }
-.nvo-cliente {
+.nvo-order {
     padding: 2rem 4rem;
     width: auto;
 }
@@ -167,9 +167,10 @@ h3 {
 .nav a {
     display: block;
     font-family: var(--fontTexto);
-    color: var(--grisOscuro);
+    color: var(--azul);
     margin-bottom: 2rem;
-    font-size: 1.8rem;
+    font-size: 2rem;
+    font-weight: bold; 
     position: relative;
     padding-left: 5rem;
     padding-top: 2rem;
@@ -186,21 +187,7 @@ h3 {
     left: 0;
     top: 1rem;
 }
-.nav a.orders::before {
-    font-family: "Font Awesome 5 Free"; 
-    font-weight: 900; 
-    content: "\f0c0";
-}
-.nav a.productos::before {
-    font-family: "Font Awesome 5 Free"; 
-    font-weight: 900; 
-    content: "\f468";
-}
-.nav a.pedidos::before {
-    font-family: "Font Awesome 5 Free"; 
-    font-weight: 900; 
-    content: "\f02d";
-}
+
 
 /** Caja **/
 
@@ -211,7 +198,7 @@ h3 {
 }
 .caja-contenido {
     background-color: white;
-    padding: 2rem 3rem;
+    padding: 2rem 4rem;
     min-height: 80rem;
     -webkit-box-shadow: 0px 7px 6px -5px rgba(0,0,0,0.36);
     -moz-box-shadow: 0px 7px 6px -5px rgba(0,0,0,0.36);
@@ -220,82 +207,55 @@ h3 {
 }
 
 /** Mostrar orders **/
-.listado-orders,
-.listado-productos,
-.listado-pedidos {
+.listado-orders {
     list-style: none;
     padding: 0;
 }
-.cliente,
-.producto,
-.pedido,
-.resumen li {
+.order {
     padding: 2rem 0;
     border-bottom: 1px solid var(--grisClaro);
 }
-.cliente:last-of-type,
-.producto:last-of-type, 
-.pedido:last-of-type{
+.order:last-of-type {
     border-bottom: 0;
 }
 @media (min-width: 768px) {
-    .cliente,
-    .producto,
-    .pedido {
+    .order {
         display: flex;
         justify-content: space-between;
     }
-    .cliente .info-cliente,
-    .producto .info-producto,
-    .pedido .info-pedido {
+    .order .info-order {
         flex: 0 0 calc(70% - 1rem);
     }
-    .cliente .acciones,
-    .producto .acciones,
-    .pedido .acciones {
+    .order .actions {
         flex: 0 0 calc(30% - 1rem);
         padding: 2rem 0;
         display: flex;
         flex-direction: column;
         justify-content: space-around;
     } 
-    
-    .pedido .acciones,
-    .producto .acciones  {
-        justify-content: flex-start;
-    }
 }
-.acciones form {
+.actions form {
     width: 100%;
 }
-.acciones .btn {
+.actions .btn {
     display: block;
     width: 100%;
     margin-bottom: 1rem;
 }
 
 @media (min-width: 768px) {
-    .cliente .acciones a:last-of-type,
-    .producto .acciones a:last-of-type, 
-    .pedido .acciones a:last-of-type {
+    .order .actions a:last-of-type {
         margin-bottom: 0;
     } 
 }
-.cliente p,
-.producto p,
-.pedido p {
+.order p {
     margin: 2rem 0;
 }
-.cliente .nombre,
-.producto .nombre,
-.pedido .id,
-.resumen .nombre {
+.order .number {
     font-size: 2.4rem;
     color: var(--azul);
 }
-.cliente .empresa,
-.pedido .nombre, 
-.resumen .precio{
+.order .store {
     font-weight: 700;
     font-size: 2rem;
 }
@@ -350,22 +310,7 @@ form .campo input[readonly] {
     display: flex;
     justify-content: flex-end;
 }
-.resumen {
-    padding: 0;
-}
-.resumen li {
-    display: flex;
-    justify-content: space-around;
-    padding: 2rem;
-}
-.resumen li .texto-producto, 
-.resumen li .acciones  {
-    flex: 0 0 calc(50% - 2rem);
-}
-.resumen .acciones {
-    display: flex;
-    flex-wrap: wrap;
-}
+
 .contenedor-cantidad {
     display: flex;
     align-items: center;
@@ -426,26 +371,6 @@ form .campo input[readonly] {
     width: 60rem;
 }
 
-.ficha-cliente {
-    background-color: var(--grisClaro);
-    padding: 1rem 4rem;
-}
-h3.resumen-titulo {
-    font-size: 2.4rem;
-    text-align: center;
-    color: var(--azul);
-}
-.total {
-    font-size: 1.8rem;
-    font-weight: 700;
-    text-align: right;
-    padding: 2rem;
-    text-align: center;
-}
-.total span {
-    color: var(--azul);
-}
-
 .login {
     max-width: 520px;
     margin: 15rem  auto 0 auto;
@@ -455,7 +380,4 @@ h3.resumen-titulo {
 }
 .login h2 {
     text-align: center;
-}
-.login .contenedor-formulario {
-
 }

@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "prod": "echo \"cross-env NODE_ENV=production node index.js \" && exit 1",
     "start": "node index.js",
     "dev": "cross-env NODE_ENV=development nodemon index.js --ignore './src/database/*.json'",
     "test": "cross-env NODE_ENV=test jest --watch"

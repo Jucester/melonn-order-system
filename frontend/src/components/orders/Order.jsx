@@ -3,25 +3,22 @@ import { Link } from 'react-router-dom';
 
 const Order = ({order}) => {
 
-    const { id, seller_store, shipping_method, buyer_full_name } = order;
+    const { id, seller_store, shipping_method, buyer_full_name, creation_date } = order;
 
     return ( 
-        <li className="cliente">
-                    <div className="info-cliente">
-                        <p className="nombre"> { id } </p>
-                        <p className="empresa"> { seller_store }  </p>
-                        <p> { shipping_method } </p>
-                        <p> { buyer_full_name } </p>
+        <li className="order">
+                    <div className="info-order">
+                        <p className="number"> Order Number: { id } </p>
+                        <p className="store"> Seller Store: { seller_store }  </p>
+                        <p> Creation Date: { creation_date } </p>
+                        <p> Shipping method: { shipping_method } </p>
                     </div>
-                    <div className="acciones">
+                    <div className="actions">
                         <Link to={`/order/details/${id}`} className="btn btn-azul">
                             <i className="fas fa-pen-alt"></i>
                             Details
                         </Link>
-                        <button type="button" className="btn btn-rojo btn-eliminar">
-                            <i className="fas fa-times"></i>
-                            Delete
-                        </button>
+                     
                     </div>
                 </li>
      );

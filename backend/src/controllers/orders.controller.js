@@ -34,9 +34,12 @@ controller.getShippingMethods = async (req, res) => {
 };
 
 controller.getOrders = (req, res) => {
- 
+    
+    const { userId } = req.params;
     const json_orders = fs.readFileSync(dbPath, 'utf-8');
     let orders = JSON.parse(json_orders);
+
+    orders = orders.filter( order => order.user_id === userId )
 
     res.status(200).json({
         message: 'Order List',
@@ -100,7 +103,7 @@ controller.createOrder = async (req, res) => {
         }
 
         // if not repeated, then validate the data
-        let newOrder = { id: (Date.now() + Math.floor(Math.random() * 101) + 1).toString(), ... req.body };
+        let newOrder = { id: "MSE-" + (Date.now() + Math.floor(Math.random() * 101) + 1).toString(), ... req.body };
 
         // 1. VALIDATE BASED ON WEIGHT AVAILABILITY: Calculating the weight and comparing with the rules
         let items = newOrder.line_items;

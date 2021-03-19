@@ -1,8 +1,12 @@
-import React, { Fragment, useState, useEffect } from 'react';
+import React, { Fragment, useState, useEffect, useContext } from 'react';
+import { withRouter } from 'react-router-dom';
 import clientAxios from "../../config/axios";
+import { AuthContext } from '../../context/AuthContext';
 
 // .get('/api/1.0/orders/999')
 const OrderDetails = (props) => {
+
+    const [auth, saveAuth] = useContext(AuthContext);
 
     const { id } = props.match.params;
 
@@ -31,10 +35,32 @@ const OrderDetails = (props) => {
             readyPickupPromiseMax: null
     });
     
+    
     const getOrderDetails = async () => {
-        const response = await clientAxios.get(`/orders/order/${id}`);
-        console.log(response.data.order);
-        saveOrder(response.data.order)
+
+        if (auth.token !== '') { 
+            try {
+                /* {
+          headers: {
+            Authorization: `Bearer ${auth.token}`
+          }
+        } */
+                const response = await clientAxios.get(`/orders/order/${id}`, {
+                    headers: {
+                      Authorization: `Bearer ${auth.token}`
+                    }
+                  });
+                console.log(response.data.order);
+                saveOrder(response.data.order)
+            } catch (error) {
+                if(error.response.status === 500) {
+                    props.history.push('/login');
+                }
+            }
+        } else {
+            props.history.push('/login');
+        }
+       
 
     }
 
@@ -83,4 +109,4 @@ const OrderDetails = (props) => {
     );
 }
  
-export default OrderDetails;
+export default withRouter(OrderDetails);
