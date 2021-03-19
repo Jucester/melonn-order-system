@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const Order = ({order}) => {
 
@@ -13,13 +14,13 @@ const Order = ({order}) => {
                         <p> { buyer_full_name } </p>
                     </div>
                     <div className="acciones">
-                        <a href="/" className="btn btn-azul">
+                        <Link to={`/order/details/${id}`} className="btn btn-azul">
                             <i className="fas fa-pen-alt"></i>
-                            Editar Cliente
-                        </a>
+                            Details
+                        </Link>
                         <button type="button" className="btn btn-rojo btn-eliminar">
                             <i className="fas fa-times"></i>
-                            Eliminar Cliente
+                            Delete
                         </button>
                     </div>
                 </li>

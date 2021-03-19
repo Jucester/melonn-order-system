@@ -1,7 +1,98 @@
 [
     {
         "id": 1,
-        "email": "admin@admin.com",
-        "password": "12345678"
-    }
+        "seller_store": "Pichicho",
+        "shipping_method": "4",
+        "external_order_number": "123",
+        "buyer_full_name": "Jucel 2",
+        "buyer_phone_number": "+587456456",
+        "buyer_email": "juceld@gmail.com",
+        "shipping_address": "8 The Green, Suite A 19901",
+        "shipping_city": "Dover",
+        "shipping_region": "Delaware",
+        "shipping_country": "Estados Unidos",
+        "line_items": [{
+            "product_name": "Xiami Redmi 19",
+            "product_qty": "12312312",
+            "product_weight": "15"
+        }, {
+            "product_name": "PS4",
+            "product_qty": "3232323",
+            "product_weight": "1"
+        }],
+        "creation_date": "2021-03-17",
+        "currentHour": 12,
+        "packPromiseMin": "Mar 18 7:06 pm",
+        "packPromiseMax": "Mar 19 at 16:00 pm",
+        "shipPromiseMin": "Mar 18 7:06 pm",
+        "shipPromiseMax": "Mar 19 at 17:00 pm",
+        "deliveryPromiseMin": "Mar 18 7:06 pm",
+        "deliveryPromiseMax": "Mar 19 at 20:00 pm",
+        "readyPickupPromiseMin": null,
+        "readyPickupPromiseMax": null
+    },
+    {
+    "id": 2,
+    "seller_store": "Gouveia",
+    "shipping_method": "4",
+    "external_order_number": "123",
+    "buyer_full_name": "Jucel 2",
+    "buyer_phone_number": "+587456456",
+    "buyer_email": "juceld@gmail.com",
+    "shipping_address": "8 The Green, Suite A 19901",
+    "shipping_city": "Dover",
+    "shipping_region": "Delaware",
+    "shipping_country": "Estados Unidos",
+    "line_items": [{
+        "product_name": "Xiami Redmi 19",
+        "product_qty": "12312312",
+        "product_weight": "15"
+    }, {
+        "product_name": "PS4",
+        "product_qty": "3232323",
+        "product_weight": "1"
+    }],
+    "creation_date": "2021-03-17",
+    "currentHour": 12,
+    "packPromiseMin": "Mar 18 7:06 pm",
+    "packPromiseMax": "Mar 19 at 16:00 pm",
+    "shipPromiseMin": "Mar 18 7:06 pm",
+    "shipPromiseMax": "Mar 19 at 17:00 pm",
+    "deliveryPromiseMin": "Mar 18 7:06 pm",
+    "deliveryPromiseMax": "Mar 19 at 20:00 pm",
+    "readyPickupPromiseMin": null,
+    "readyPickupPromiseMax": null
+},
+{
+    "id": 3,
+    "seller_store": "Vessada",
+    "shipping_method": "4",
+    "external_order_number": "123",
+    "buyer_full_name": "Jucel 2",
+    "buyer_phone_number": "+587456456",
+    "buyer_email": "juceld@gmail.com",
+    "shipping_address": "8 The Green, Suite A 19901",
+    "shipping_city": "Dover",
+    "shipping_region": "Delaware",
+    "shipping_country": "Estados Unidos",
+    "line_items": [{
+        "product_name": "Xiami Redmi 19",
+        "product_qty": "12312312",
+        "product_weight": "15"
+    }, {
+        "product_name": "PS4",
+        "product_qty": "3232323",
+        "product_weight": "1"
+    }],
+    "creation_date": "2021-03-17",
+    "currentHour": 12,
+    "packPromiseMin": "Mar 18 7:06 pm",
+    "packPromiseMax": "Mar 19 at 16:00 pm",
+    "shipPromiseMin": "Mar 18 7:06 pm",
+    "shipPromiseMax": "Mar 19 at 17:00 pm",
+    "deliveryPromiseMin": "Mar 18 7:06 pm",
+    "deliveryPromiseMax": "Mar 19 at 20:00 pm",
+    "readyPickupPromiseMin": null,
+    "readyPickupPromiseMax": null
+}
 ]

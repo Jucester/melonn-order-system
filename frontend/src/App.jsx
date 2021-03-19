@@ -8,6 +8,7 @@ import Orders from "./components/orders/Orders";
 import OrderCreate from "./components/orders/OrderCreate";
 import Products from "./components/products/Products";
 import Configs from "./components/configs/Configs";
+import OrderDetails from "./components/orders/OrderDetails";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
             <Switch>
               <Route exact path="/" component={Orders} />
               <Route exact path="/order/create" component={OrderCreate} />
+              <Route exact path="/order/details/:id" component={OrderDetails} />
               <Route exact path="/products" component={Products} />
               <Route exact path="/configs" component={Configs} />
             </Switch>

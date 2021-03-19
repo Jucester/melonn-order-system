@@ -20,15 +20,16 @@ const Orders = () => {
     <Fragment>
       <h1> Orders </h1>
 
-      <Link to="/order/create" class="btn btn-verde nvo-cliente"> <i class="fas fa-plus-circle"></i>
+      <Link to="/order/create" className="btn btn-verde nvo-cliente"> <i className="fas fa-plus-circle"></i>
                 Create Order
       </Link>
 
 
       <ul className="listado-orders">
-        {orders.map((order) => (
+        {orders.map((order, i) => (
             
-           <Order key={order.id} order={order} />
+           <Order key={i} order={order} />
+           
         ) )}
       </ul>
     </Fragment>

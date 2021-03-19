@@ -41,6 +41,18 @@ h2 {
     color: var(--grisOscuro);
     font-size: 3rem;
 }
+
+h3 {
+    font-size: 2.4rem;
+    color: var(--azul);
+    font-family: var(--fontTexto);
+    font-weight: 700;
+    text-align: center;
+    display: block;
+    padding: 2rem;
+    margin-bottom: 2rem;
+}
+
 .contenedor {
     max-width: 1400px;
     margin: 0 auto;
@@ -287,31 +299,7 @@ h2 {
     font-weight: 700;
     font-size: 2rem;
 }
-.pedido .total {
-    font-weight: 700;
-    color: var(--azul);
-    font-size: 2.4rem;
-}
-.pedido .productos {
-    font-weight: 700;
-}
-.articulos-pedido {
-    padding: 2rem;
-    background-color: #f1f1f1;
-}
-.pedido ul  {
-    list-style: none;
-    padding: 0;
-}
-.pedido ul li:first-of-type {
-    border-top: none;
-}
-.pedido ul li:last-of-type {
-    border-bottom: none;
-}
-.pedido ul li {
-    border-top: 1px solid #e1e1e1;
-}
+
 
 /** Formularios **/
 form {

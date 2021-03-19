@@ -19,5 +19,5 @@ app.use('/api/1.0/orders', OrdersRoutes)
 
 // Error Handler
 
-
+//console.log('Env: ', process.env.NODE_ENV);
 module.exports = app;

@@ -4,16 +4,14 @@ const clientAxios = require('../configs/axios');
 
 // Utils functions
 const checkBusinessDay = require('../utils/checkBusinessDay');
-const getNextBusinessDays = require('../utils/getNextBusinessDays');
 const validateOrderWeight = require('../utils/validateOrderWeight');
+const { calculateMinPromise, calculateMaxPromise } = require('../services/calculatePromises');
 
 // Controller object that saves all our functions
 const controller = {};
 
-// Json file to simulate database
-const json_orders = fs.readFileSync('src/database/orders.json', 'utf-8');
-let orders = JSON.parse(json_orders);
-
+// Path to the Json file to simulate database
+let dbPath = process.env.NODE_ENV == 'development' ? 'src/database/orders.json' : 'src/database/test.json';
 
 const packPromiseObject = {
     "packPromiseMin": null,
@@ -26,21 +24,59 @@ const packPromiseObject = {
     "readyPickupPromiseMax": null,
 }
 
+controller.getShippingMethods = async (req, res) => {
+
+    const response = await clientAxios.get(`/shipping-methods`);
+
+    res.status(200).json({
+        content: response.data
+    })
+};
+
 controller.getOrders = (req, res) => {
-   
+ 
+    const json_orders = fs.readFileSync(dbPath, 'utf-8');
+    let orders = JSON.parse(json_orders);
+
     res.status(200).json({
         message: 'Order List',
         orders
     });
 }
 
+controller.getOrder = (req, res) => {
+
+    const { id } = req.params;
+
+    const json_orders = fs.readFileSync(dbPath, 'utf-8');
+    let orders = JSON.parse(json_orders);
+
+    const ordersFound = orders.filter(order => order.id == id);
+
+    if( ordersFound.length == 0 ) {
+        return res.status(404).json({
+            message: 'Order not found',
+        });
+    }
+    const order = ordersFound[0]
+
+    return res.status(200).json({
+        message: 'Order found',
+        order
+    });
+}
+
 controller.createOrder = async (req, res) => {
-    
-    //let date = moment().format('YYYY-MM-DD, h:mm:ss a');
-    let date = moment().format('YYYY-MM-DD');
+
+    // Initialize "database"
+    const json_orders = fs.readFileSync(dbPath, 'utf-8');
+    let orders = JSON.parse(json_orders);
+
+    let creationDate = req.body.creation_date ? req.body.creation_date : moment().format('YYYY-MM-DD');
 
     // Checking if date is a business day
-    const checkDay = await checkBusinessDay(date);
+    const checkDay = await checkBusinessDay(creationDate);
+
     /*
     if (checkDay) {
         return res.status(200).json({
@@ -48,34 +84,25 @@ controller.createOrder = async (req, res) => {
         });
     }*/
 
-    const nextBusinessDays = await getNextBusinessDays();
-  
-
     // Retrieving the rules from the API
     const shippingMethodId = Number.parseInt(req.body.shipping_method);
     const response = await clientAxios.get(`/shipping-methods/${shippingMethodId}`);
     const rules = response.data.rules;
     
     try {
-          
-        // Checking is order is repited
-        const checkOrder = orders.filter( order => order.external_order_number == req.body.external_order_number );
+        // First checking if order is repeated based on his external order number
+        const checkOrder = orders.filter( order => order.external_order_number === req.body.external_order_number );
 
         if( checkOrder.length > 0 ) {
             return res.status(200).json({
                 message: 'Order with that number already exists',
-                date
             });
         }
 
-        // if not repited, then add it to the "database"
-        let newOrder = { id: 1, ... req.body, creation_date: date };
-        //orders.push(newOrder);
+        // if not repeated, then validate the data
+        let newOrder = { id: (Date.now() + Math.floor(Math.random() * 101) + 1).toString(), ... req.body };
 
-        /*
-            1. VALIDATE BASED ON WEIGHT AVAILABILITY
-        */
-        // Calculating the weight and comparing with the rules
+        // 1. VALIDATE BASED ON WEIGHT AVAILABILITY: Calculating the weight and comparing with the rules
         let items = newOrder.line_items;
         const minWeight = rules.availability.byWeight.min;
         const maxWeight = rules.availability.byWeight.max;
@@ -88,17 +115,14 @@ controller.createOrder = async (req, res) => {
             });
         }
 
-        /*
-            2. VALIDATE BASED ON REQUEST TIME AVAILABILITY
-        */
-        //  Checking day type and company hours active
+        // 2. VALIDATE BASED ON REQUEST TIME AVAILABILITY: Checking day type and company hours available
         const dayType = rules.availability.byRequestTime.dayType;
         const fromTimeOfDay = rules.availability.byRequestTime.fromTimeOfDay;
         const toTimeOfDay = rules.availability.byRequestTime.toTimeOfDay;
 
         switch ( dayType ) {
             case 'ANY':
-                let currentHour = new Date().getHours();
+                let currentHour = req.body.currentHour ? req.body.currentHour : new Date().getHours();
                 if (currentHour <= fromTimeOfDay || currentHour >= toTimeOfDay ) {
                     return res.status(200).json({
                         message: "Not available at this hour",
@@ -107,8 +131,7 @@ controller.createOrder = async (req, res) => {
                 break;
             case 'BUSINESS':
                 if (!checkDay) {
-                    //let currentHour = new Date().getHours();
-                    let currentHour = 11;
+                    let currentHour = req.body.currentHour ? req.body.currentHour : new Date().getHours();
                     if (currentHour <= fromTimeOfDay || currentHour >= toTimeOfDay ) {
                         return res.status(200).json({
                             message: "Not available at this hour",
@@ -116,48 +139,35 @@ controller.createOrder = async (req, res) => {
                     }
                 } else {
                     return res.status(200).json({
-                        message: "NOT A BUSINESS DAY",
+                        message: "NOT FOR NOW",
                     });
                 }
-                break;
-            case 'NON-BUSINESS':
-            case 'WEEKEND':
-                return res.status(200).json({
-                    message: "NOT FOR NOW",
-                });
                 break;
             default:
                 break;
         }
 
-
-        /*
-            3. CALCULATE PROMISES
-        */
-        // determine which case applies
+        // 3. DETERMINE WHICH CASE APPLIES: determine which case applies
         const cases = rules.promisesParameters.cases;
-        let priority = 0;
+        let priority = 1;
         let workingCase = null;
 
-        while (workingCase == null) {
-            //console.log(cases[priority].priority);
-        
-            if (cases[priority].priority) {
-                
-                let dType = cases[priority].condition.byRequestTime.dayType;
-                let fTimeOfDay = cases[priority].condition.byRequestTime.fromTimeOfDay;
-                let tTimeOfDay = cases[priority].condition.byRequestTime.toTimeOfDay;
+         // looping through cases
+        cases.forEach( cas => {
+            if (cas.priority == priority) {
+                let dType = cas.condition.byRequestTime.dayType;
+                let fTimeOfDay = cas.condition.byRequestTime.fromTimeOfDay;
+                let tTimeOfDay = cas.condition.byRequestTime.toTimeOfDay;
 
-                //console.log(dType);
                 switch ( dType ) {
                     case 'ANY':
                         let currentHour = new Date().getHours();
                         if (currentHour <= fTimeOfDay || currentHour >= tTimeOfDay ) {
                             priority++
                         } else {
-                            workingCase = cases[priority];
-                            break
+                            workingCase = cas;   
                         }
+                        break;
                     case 'BUSINESS':
                         if (checkDay) {
                             priority++
@@ -167,136 +177,43 @@ controller.createOrder = async (req, res) => {
                             if (currentHour <= fTimeOfDay || currentHour >= tTimeOfDay ) {
                                 priority++
                             } else {
-                                workingCase = cases[priority];
-                                break
+                                workingCase = cas;
                             }
                         }
                         break;
                     case 'NON-BUSINESS':
                     case 'WEEKEND':
-                        return res.status(200).json({
+                        return res.json({
                             message: "NOT FOR NOW",
                         });
                     default:
                         break;
                 }
             }
+        })
+        
+        // 4. Calculate Promises
+        // Saving the min cases
+        packPromiseObject.packPromiseMin = await calculateMinPromise(workingCase.packPromise);
+        packPromiseObject.shipPromiseMin = await calculateMinPromise(workingCase.shipPromise);  
+        packPromiseObject.deliveryPromiseMin = await calculateMinPromise(workingCase.deliveryPromise);
+        packPromiseObject.readyPickupPromiseMin = await calculateMinPromise(workingCase.readyPickUpPromise);
 
-        }
+        // Saving the max cases
+        packPromiseObject.packPromiseMax = await calculateMaxPromise(workingCase.packPromise);
+        packPromiseObject.shipPromiseMax = await calculateMaxPromise(workingCase.shipPromise);
+        packPromiseObject.deliveryPromiseMax = await calculateMaxPromise(workingCase.deliveryPromise);
+        packPromiseObject.readyPickupPromiseMax = await calculateMaxPromise(workingCase.readyPickUpPromise);
 
-        //console.log('Working', workingCase);
-
-        /*
-            4. Calculate PACK promise
-        */
-        // Getting pack promise params from working cases
-        let minType = workingCase.packPromise.min.type;
-        let minDeltaHours =  workingCase.packPromise.min.deltaHours;
-        let minDeltaBusinessDay =  workingCase.packPromise.min.deltaBusinessDays;
-        let minTimeOfDay = workingCase.packPromise.min.timeOfDay;
-
-        let maxType = workingCase.packPromise.max.type;
-        let maxDeltaHours =  workingCase.packPromise.max.deltaHours;
-        let maxDeltaBusinessDay =  workingCase.packPromise.max.deltaBusinessDays;
-        let maxTimeOfDay = workingCase.packPromise.max.timeOfDay;
-
-    
-        if (!minType) {
-            packPromiseObject.packPromiseMin = null;
-        } else if (minType == 'DELTA-HOURS') {
-            packPromiseObject.packPromiseMin = new Date().getHours() + minDeltaHours;
-        } else if (minType == 'DELTA-BUSINESSDAYS') {
-            packPromiseObject.packPromiseMin = nextBusinessDays[minDeltaBusinessDay - 1] + " " + minTimeOfDay;
-        } 
-
-        if (!maxType) {
-            packPromiseObject.packPromiseMax = null;
-        } else if (maxType == 'DELTA-HOURS') {
-            packPromiseObject.packPromiseMax = new Date().getHours() + maxDeltaHours;
-        } else if (maxType == 'DELTA-BUSINESSDAYS') {
-            packPromiseObject.packPromiseMax = nextBusinessDays[maxDeltaBusinessDay - 1] + maxTimeOfDay;
-        } 
-
-        /*
-            5. Calculate SHIP promise
-        */
-        // Getting ship promise params from working cases
-        let shipMinType = workingCase.shipPromise.min.type;
-        let shipMaxType = workingCase.shipPromise.max.type;
-
-        if (!shipMinType) {
-            packPromiseObject.shipPromiseMin = null;
-        } else if (minType == 'DELTA-HOURS') {
-            packPromiseObject.shipPromiseMin = new Date().getHours() + minDeltaHours;
-        } else if (minType == 'DELTA-BUSINESSDAYS') {
-            packPromiseObject.shipPromiseMin = nextBusinessDays[minDeltaBusinessDay - 1] + minTimeOfDay;
-        } 
-
-        if (!shipMaxType) {
-            packPromiseObject.shipPromiseMax = null;
-        } else if (maxType == 'DELTA-HOURS') {
-            packPromiseObject.shipPromiseMax = new Date().getHours() + maxDeltaHours;
-        } else if (maxType == 'DELTA-BUSINESSDAYS') {
-            packPromiseObject.shipPromiseMax = nextBusinessDays[maxDeltaBusinessDay - 1] + maxTimeOfDay;
-        } 
-
-        /*
-            6. Calculate Delivery promise
-        */
-        // Getting Delivery promise params from working cases
-        let delvieryMinType = workingCase.deliveryPromise.min.type;
-        let deliveryMaxType = workingCase.deliveryPromise.max.type;
-
-        if (!delvieryMinType) {
-            packPromiseObject.deliveryPromiseMin = null;
-        } else if (minType == 'DELTA-HOURS') {
-            packPromiseObject.deliveryPromiseMin = new Date().getHours() + minDeltaHours;
-        } else if (minType == 'DELTA-BUSINESSDAYS') {
-            packPromiseObject.deliveryPromiseMin = nextBusinessDays[minDeltaBusinessDay - 1] + minTimeOfDay;
-        } 
-
-        if (!deliveryMaxType) {
-            packPromiseObject.deliveryPromiseMax = null;
-        } else if (maxType == 'DELTA-HOURS') {
-            packPromiseObject.deliveryPromiseMax = new Date().getHours() + maxDeltaHours;
-        } else if (maxType == 'DELTA-BUSINESSDAYS') {
-            packPromiseObject.deliveryPromiseMax = nextBusinessDays[maxDeltaBusinessDay - 1] + maxTimeOfDay;
-        } 
-
-
-        /*
-            7. Calculate Ready Pick promise
-        */
-        // Getting Delivery promise params from working cases
-        let pickupMinType = workingCase.readyPickUpPromise.min.type;
-        let pickupMaxType = workingCase.readyPickUpPromise.max.type;
-
-        if (!pickupMinType) {
-            packPromiseObject.readyPickupPromiseMin = null;
-        } else if (minType == 'DELTA-HOURS') {
-            packPromiseObject.readyPickupPromiseMin = new Date().getHours() + minDeltaHours;
-        } else if (minType == 'DELTA-BUSINESSDAYS') {
-            packPromiseObject.readyPickupPromiseMin = nextBusinessDays[minDeltaBusinessDay - 1] + minTimeOfDay;
-        } 
-
-        if (!pickupMaxType) {
-            packPromiseObject.readyPickupPromiseMax = null;
-        } else if (maxType == 'DELTA-HOURS') {
-            packPromiseObject.readyPickupPromiseMax = new Date().getHours() + maxDeltaHours;
-        } else if (maxType == 'DELTA-BUSINESSDAYS') {
-            packPromiseObject.readyPickupPromiseMax = nextBusinessDays[maxDeltaBusinessDay - 1] + maxTimeOfDay;
-        } 
-
-        //console.log(packPromiseObject);
 
         let order = {
             ...newOrder, ...packPromiseObject
         }
-        // saving the array in a file
-        
+
+        // saving the new order in a "database"
         orders.push(order);
         const json_orders = JSON.stringify(orders);
-        fs.writeFileSync('src/database/orders.json', json_orders, 'utf-8');
+        fs.writeFileSync(dbPath, json_orders, 'utf-8');
 
         return res.status(201).json({
             message: 'Order created',
@@ -305,18 +222,30 @@ controller.createOrder = async (req, res) => {
     } catch (err) {
         res.status(502).json({
             message: 'Something went wrong',
-            date
         });
     }
 }
 
-controller.getShippingMethods = async (req, res) => {
+controller.deleteOrder = (req, res) => {
 
-    const response = await clientAxios.get(`/shipping-methods`);
+    const json_orders = fs.readFileSync(dbPath, 'utf-8');
+    let orders = JSON.parse(json_orders);
+    
+    filterOlders = orders.filter( order => order.id != req.params.id );
 
-    res.status(200).json({
-        content: response.data
-    })
-};
+    if ( filterOlders.length == 0 ) {
+        console.log(orders);
+        return res.status(200).json({
+            message: 'Error'
+        });
+    }
+
+    json_orders = JSON.stringify(filterOlders);
+    fs.writeFileSync(dbPath, json_orders, 'utf-8');
+
+    return res.status(200).json({
+        message: 'Order deleted'
+    });
+}
 
 module.exports = controller;

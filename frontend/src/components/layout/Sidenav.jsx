@@ -8,8 +8,8 @@ const Sidenav = () => {
 
             <nav className="nav">
                 <Link to={"/"} className="orders"> Order List </Link>
-                <Link to={"/products"} className="productos"> Products </Link>
-                <Link to={"/configs"} className="pedidos"> Configs </Link>
+             {  /* <Link to={"/products"} className="productos"> Products </Link>
+                <Link to={"/configs"} className="pedidos"> Configs </Link> */}
             </nav>
         </aside>
      );
