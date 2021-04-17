@@ -4,16 +4,15 @@ App to Manage Orders made by Sellers
 
 ### Details: 
 
-This is a order management system that comunicates with the Melonn API to get details about
-the shipping methods. Sellers can place orders so their sells are handle by the logistic team.
-
-The app use json files as database (based on requirements). It works but can make tests fail. 
+This is a Order Management System were clients (sellers) can place their orders so Logistics team can handle it depending
+on the shipping method selected.
 
 
 # Stack
 
 * Node.js 
 * Express 
+* MongoDB
 * ReactJS
 
 # How to run it?
@@ -34,7 +33,7 @@ git clone https://github.com/Jucester/melonn-order-system.git
 ```
 First you need to make a .env file with this variables:
 
-MELONN_API_KEY=<Melonn api key>
+MONGO_URI=<the url of your mongo database>
 JWT_KEY=<secret key for JWT, can be whatever you want for review/testing purposes>
 PORT=<custom port. By default the backend is running on port 4000>
 
