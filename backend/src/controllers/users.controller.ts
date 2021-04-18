@@ -1,40 +1,31 @@
-const fs = require('fs');
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
+import { RequestHandler } from 'express';
+import User, { IUser } from '../models/User';
+import jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
 
-const controller = {};
 
-// Json file to simulate database
-// Path to the Json file to simulate database
-let dbPath = process.env.NODE_ENV == 'development' ? 'src/database/users.json' : 'src/database/usersTest.json';
-const json_users = fs.readFileSync(dbPath, 'utf-8');
-let users = JSON.parse(json_users);
+export const register: RequestHandler = async (req, res) => {
 
-const User = {
-    name: "",
-    email: "",
-    password: ""
-}
-
-controller.register = async (req, res) => {
-
-    const user = {id: (Date.now() + Math.floor(Math.random() * 101) + 1).toString(), ...req.body };
-    user.password = await bcrypt.hash(req.body.password, 12);
+    //const user = {id: (Date.now() + Math.floor(Math.random() * 101) + 1).toString(), ...req.body };
+    
+    const { email, password } = req.body;
 
     try {
 
-        const userRepeated = users.filter( user => user.email == req.body.email );
+        const userRepeated = await User.findOne( { email: email } );
 
-        if (userRepeated.length > 0) {
+        if (userRepeated) {
             return res.status(200).json({
                 message: 'That email is already registered',
             });
         }
 
-        users.push(user);
-        const json_users = JSON.stringify(users);
-        fs.writeFileSync(dbPath, json_users, 'utf-8');
-        
+        let user: IUser = new User(req.body);
+        const salt = await bcrypt.genSaltSync(12);
+        user.password = await bcrypt.hash(password, salt);
+
+        await user.save();
+      
         return res.status(201).json({
             message: 'User created',
             user,
@@ -49,43 +40,45 @@ controller.register = async (req, res) => {
 
 }
 
-controller.login = (req, res) => {
+export const login: RequestHandler = async (req, res) => {
     
     const { email, password } = req.body;
 
-    let user = users.filter( user => user.email == email );
-
-    if( user.length == 0) {
+    let user = await User.findOne({ email });
+    if(!user) {
         return res.status(401).json({
-            message: 'User does not exist'
-        })
+            message: 'User does not exists'
+        });
     }
 
-    user = user[0]
- 
     if(!bcrypt.compareSync(password, user.password)) {
         return res.status(401).json({
             message: 'Invalid password'
         })
     } else {
         
-        let validUser = { id: user.id, email: user.email, name: user.name }
+        const payload = {
+            user: {
+                id: user.id,
+                email: user.email,
+                username: user.username
+            }
+        }
 
-        const token = jwt.sign({ ...validUser}, 
-        process.env.JWT_KEY, 
-        {
-            expiresIn: '1h'
-        });
+
+        const token = jwt.sign(
+                payload, 
+                process.env.JWT_KEY || 'default_token', 
+                {
+                    expiresIn: '1h'
+                }
+        );
 
         return res.status(200).json({
             message: 'User logged',
             token,
-            user: validUser
+            user: payload
         })
     }
 
 }
-
-
-
-module.exports = controller;

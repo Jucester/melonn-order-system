@@ -1,9 +1,16 @@
-require('dotenv').config();
-const app = require('./src/app');
-const connectDB = require('./src/configs/database');
+import dotenv from 'dotenv';
+dotenv.config();
+import app from './src/app';
+import connectDB from './src/config/database';
 
-connectDB();
 
-app.listen(app.get('PORT'), () => {
-    console.log('Server on port ', app.get('PORT'))
-});
+function main() {
+    connectDB();
+
+    app.listen(app.get('PORT'), () => {
+        console.log('Server on port ', app.get('PORT'))
+    });
+}
+
+
+main();

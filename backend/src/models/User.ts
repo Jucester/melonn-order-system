@@ -1,7 +1,14 @@
-const { Schema, model } = require('mongoose');
-const bcrypt = require('bcrypt');
+import { Schema, model, Document } from 'mongoose';
+//import bcrypt from 'bcrypt';
 
-const UserSchema = Schema({
+export interface IUser extends Document {
+    username: string,
+    email: string,
+    password: string
+}
+
+
+const UserSchema = new Schema({
     username: {
         type: String,
         required: true,
@@ -16,12 +23,9 @@ const UserSchema = Schema({
     password: {
         type: String,
         required: true,
-        trim: true
     },
-    created_at: {
-        type: Date,
-        default: Date.now
-    }
+}, {
+    timestamps: true
 });
 
 /*
@@ -32,5 +36,4 @@ UserSchema.methods.encryptPassword = password => {
 UserSchema.methods.validatePassword = function(password) {
     return bcrypt.compare(password, this.password);
 } */
-
-module.exports = model('users', UserSchema);
+export default model<IUser>('User', UserSchema);

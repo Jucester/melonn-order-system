@@ -4,10 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "prod": "echo \"cross-env NODE_ENV=production node index.js \" && exit 1",
+    "prod": "echo \"cross-env NODE_ENV=production node index.ts \" && exit 1",
     "build": "tsc",
-    "start": "node index.js",
-    "dev": "cross-env NODE_ENV=development nodemon index.js --ignore './src/database/*.json'",
+    "start": "node index.ts",
+    "dev": "cross-env NODE_ENV=development ts-node-dev index.ts",
     "test": "cross-env NODE_ENV=test jest --watch"
   },
   "author": "Jucel Dorante",
