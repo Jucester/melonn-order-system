@@ -1,6 +1,6 @@
-const clientAxios = require('../configs/axios');
+import clientAxios from '../config/axios';
 
-const checkBusinessDay = async (date) => {
+const checkBusinessDay = async (date : any ) => {
     
     let apiResponse = await clientAxios.get('/off-days');
     const offDays = apiResponse.data;
@@ -8,4 +8,4 @@ const checkBusinessDay = async (date) => {
     return offDays.includes(date);
 }
 
-module.exports = checkBusinessDay;
+export default checkBusinessDay;

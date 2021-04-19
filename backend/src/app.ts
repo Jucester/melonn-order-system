@@ -4,7 +4,7 @@ import cors from 'cors';
 //require('dotenv').config();
 
 // routes import
-//import OrdersRoutes from './routes/orders.routes';
+import OrdersRoutes from './routes/orders.routes';
 import UsersRoutes from './routes/users.routes';
 
 // Initialize express
@@ -21,7 +21,7 @@ app.use(cors());
 
 // Routes
 app.use('/api/1.0/users', UsersRoutes);
-//app.use('/api/1.0/orders', OrdersRoutes);
+app.use('/api/1.0/orders', OrdersRoutes);
 
 // TODO: Error Handler
 

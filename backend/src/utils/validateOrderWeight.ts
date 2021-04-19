@@ -1,7 +1,7 @@
-const validateOrderWeight = (items, minWeight, maxWeight) => {
+const validateOrderWeight = (items : any, minWeight : any, maxWeight : any) => {
 
   let total = 0;
-  items.forEach((item) => (total += Number.parseInt(item.product_weight)));
+  items.forEach((item : any) => (total += Number.parseInt(item.product_weight)));
 
   if (total <= minWeight || total >= maxWeight) {
     return false;
@@ -10,4 +10,4 @@ const validateOrderWeight = (items, minWeight, maxWeight) => {
   return true;
 };
 
-module.exports = validateOrderWeight;
+export default validateOrderWeight;

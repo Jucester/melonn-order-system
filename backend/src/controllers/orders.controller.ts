@@ -1,30 +1,21 @@
-const moment = require('moment');
-const fs = require('fs');
-const clientAxios = require('../configs/axios');
+import { RequestHandler } from 'express';
+import Order, { IOrder } from '../models/Order';
+import moment from 'moment';
+import clientAxios from '../config/axios';
 
 // Utils functions
-const checkBusinessDay = require('../utils/checkBusinessDay');
-const validateOrderWeight = require('../utils/validateOrderWeight');
-const { calculateMinPromise, calculateMaxPromise } = require('../services/calculatePromises');
+import checkBusinessDay from '../utils/checkBusinessDay';
+import validateOrderWeight from '../utils/validateOrderWeight';
+import { calculateMinPromise, calculateMaxPromise } from '../services/calculatePromises';
 
 // Controller object that saves all our functions
-const controller = {};
 
 // Path to the Json file to simulate database
-let dbPath = process.env.NODE_ENV == 'development' ? 'src/database/orders.json' : 'src/database/test.json';
+//let dbPath = process.env.NODE_ENV == 'development' ? 'src/database/orders.json' : 'src/database/test.json';
 
-const packPromiseObject = {
-    "packPromiseMin": null,
-    "packPromiseMax": null,
-    "shipPromiseMin": null,
-    "shipPromiseMax": null,
-    "deliveryPromiseMin": null,
-    "deliveryPromiseMax": null,
-    "readyPickupPromiseMin": null,
-    "readyPickupPromiseMax": null,
-}
+//const packPromiseObject : {[k: string ] : any } = {};
 
-controller.getShippingMethods = async (req, res) => {
+export const getShippingMethods : RequestHandler = async (req, res) => {
 
     const response = await clientAxios.get(`/shipping-methods`);
 
@@ -33,21 +24,20 @@ controller.getShippingMethods = async (req, res) => {
     })
 };
 
-controller.getOrders = (req, res) => {
+export const getOrders : RequestHandler = async (req, res) => {
     
     const { userId } = req.params;
-    const json_orders = fs.readFileSync(dbPath, 'utf-8');
-    let orders = JSON.parse(json_orders);
-
-    orders = orders.filter( order => order.user_id === userId )
+   
+    let orders = await Order.find({ where: { userId } });
+    
 
     res.status(200).json({
         message: 'Order List',
         orders
     });
 }
-
-controller.getOrder = (req, res) => {
+/*
+export const getOrder : RequestHandler = (req, res) => {
 
     const { id } = req.params;
 
@@ -67,14 +57,12 @@ controller.getOrder = (req, res) => {
         message: 'Order found',
         order
     });
-}
+} */
 
-controller.createOrder = async (req, res) => {
+export const createOrder : RequestHandler  = async (req, res) => {
 
+    console.log(req.body);
     // Initialize "database"
-    const json_orders = fs.readFileSync(dbPath, 'utf-8');
-    let orders = JSON.parse(json_orders);
-
     let creationDate = req.body.creation_date ? req.body.creation_date : moment().format('YYYY-MM-DD');
 
     // Checking if date is a business day
@@ -88,25 +76,28 @@ controller.createOrder = async (req, res) => {
     }*/
 
     // Retrieving the rules from the API
-    const shippingMethodId = Number.parseInt(req.body.shipping_method);
+    const shippingMethodId = Number.parseInt(req.body.shippingMethod);
     const response = await clientAxios.get(`/shipping-methods/${shippingMethodId}`);
     const rules = response.data.rules;
+
+ 
     
     try {
         // First checking if order is repeated based on his external order number
-        const checkOrder = orders.filter( order => order.external_order_number === req.body.external_order_number );
+        const checkOrder = await Order.find({ where: { externalNumber: req.body.externalOrder }});
 
-        if( checkOrder.length > 0 ) {
+        console.log(checkOrder);
+        if(checkOrder.length > 0) {
             return res.status(200).json({
                 message: 'Order with that number already exists',
             });
         }
 
         // if not repeated, then validate the data
-        let newOrder = { id: "MSE-" + (Date.now() + Math.floor(Math.random() * 101) + 1).toString(), ... req.body, creation_date: creationDate };
+        //let newOrder = { id: "MSE-" + (Date.now() + Math.floor(Math.random() * 101) + 1).toString(), ... req.body, creation_date: creationDate };
 
         // 1. VALIDATE BASED ON WEIGHT AVAILABILITY: Calculating the weight and comparing with the rules
-        let items = newOrder.line_items;
+        let items = req.body.lineItems;
         const minWeight = rules.availability.byWeight.min;
         const maxWeight = rules.availability.byWeight.max;
 
@@ -118,6 +109,8 @@ controller.createOrder = async (req, res) => {
             });
         }
 
+         console.log(1);
+    
         // 2. VALIDATE BASED ON REQUEST TIME AVAILABILITY: Checking day type and company hours available
         const dayType = rules.availability.byRequestTime.dayType;
         const fromTimeOfDay = rules.availability.byRequestTime.fromTimeOfDay;
@@ -150,13 +143,16 @@ controller.createOrder = async (req, res) => {
                 break;
         }
 
+
+         console.log(2);
+    
         // 3. DETERMINE WHICH CASE APPLIES: determine which case applies
         const cases = rules.promisesParameters.cases;
-        let priority = 1;
-        let workingCase = null;
+        let priority : number = 1;
+        let workingCase : any = null;
 
          // looping through cases
-        cases.forEach( cas => {
+        cases.forEach( (cas : any)  => {
             if (cas.priority == priority) {
                 let dType = cas.condition.byRequestTime.dayType;
                 let fTimeOfDay = cas.condition.byRequestTime.fromTimeOfDay;
@@ -195,41 +191,44 @@ controller.createOrder = async (req, res) => {
             }
         })
         
+        console.log(3);
+    
         // 4. Calculate Promises
         // Saving the min cases
-        packPromiseObject.packPromiseMin = await calculateMinPromise(workingCase.packPromise);
-        packPromiseObject.shipPromiseMin = await calculateMinPromise(workingCase.shipPromise);  
-        packPromiseObject.deliveryPromiseMin = await calculateMinPromise(workingCase.deliveryPromise);
-        packPromiseObject.readyPickupPromiseMin = await calculateMinPromise(workingCase.readyPickUpPromise);
+        const packPromiseMin = await calculateMinPromise(workingCase.packPromise);
+        const shipPromiseMin = await calculateMinPromise(workingCase.shipPromise);  
+        const deliveryPromiseMin = await calculateMinPromise(workingCase.deliveryPromise);
+        const readyPickupPromiseMin = await calculateMinPromise(workingCase.readyPickUpPromise);
 
         // Saving the max cases
-        packPromiseObject.packPromiseMax = await calculateMaxPromise(workingCase.packPromise);
-        packPromiseObject.shipPromiseMax = await calculateMaxPromise(workingCase.shipPromise);
-        packPromiseObject.deliveryPromiseMax = await calculateMaxPromise(workingCase.deliveryPromise);
-        packPromiseObject.readyPickupPromiseMax = await calculateMaxPromise(workingCase.readyPickUpPromise);
+        const packPromiseMax = await calculateMaxPromise(workingCase.packPromise);
+        const shipPromiseMax = await calculateMaxPromise(workingCase.shipPromise);
+        const deliveryPromiseMax = await calculateMaxPromise(workingCase.deliveryPromise);
+        const readyPickupPromiseMax = await calculateMaxPromise(workingCase.readyPickUpPromise);
 
 
-        let order = {
-            ...newOrder, ...packPromiseObject
-        }
-
-        // saving the new order in a "database"
-        orders.push(order);
-        const json_orders = JSON.stringify(orders);
-        fs.writeFileSync(dbPath, json_orders, 'utf-8');
+   
+        console.log(4);
+    
+        // saving the new order in a database
+        let order : IOrder = new Order(req.body);
+        await order.save();
 
         return res.status(201).json({
             message: 'Order created',
             order,
         });
+
     } catch (err) {
+        console.log(err);
         res.status(502).json({
             message: 'Something went wrong',
         });
     }
 }
 
-controller.deleteOrder = (req, res) => {
+/*
+export const deleteOrder : RequestHandler = (req, res) => {
 
     const json_orders = fs.readFileSync(dbPath, 'utf-8');
     let orders = JSON.parse(json_orders);
@@ -251,4 +250,4 @@ controller.deleteOrder = (req, res) => {
     });
 }
 
-module.exports = controller;
+*/

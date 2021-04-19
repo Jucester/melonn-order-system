@@ -1,7 +1,7 @@
-const getNextBusinessDays = require('../utils/getNextBusinessDays');
-const moment = require('moment');
+import getNextBusinessDays from '../utils/getNextBusinessDays';
+import moment from 'moment';
 
-const calculateMinPromise = async (casePromise) => {
+export const calculateMinPromise = async (casePromise : any ) => {
 
     const nextBusinessDays = await getNextBusinessDays();
 
@@ -27,7 +27,7 @@ const calculateMinPromise = async (casePromise) => {
     return promiseMin;
 }
 
-const calculateMaxPromise = async (casePromise) => {
+export const calculateMaxPromise = async (casePromise : any) => {
 
     const nextBusinessDays = await getNextBusinessDays();
 
@@ -53,7 +53,6 @@ const calculateMaxPromise = async (casePromise) => {
     return promiseMax;
 }
 
-module.exports = { calculateMinPromise, calculateMaxPromise };
 
 
 /*

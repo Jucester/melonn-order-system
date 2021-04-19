@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 
 
-export const register: RequestHandler = async (req, res) => {
+export const signUp: RequestHandler = async (req, res) => {
 
     //const user = {id: (Date.now() + Math.floor(Math.random() * 101) + 1).toString(), ...req.body };
     
@@ -40,7 +40,7 @@ export const register: RequestHandler = async (req, res) => {
 
 }
 
-export const login: RequestHandler = async (req, res) => {
+export const signIn: RequestHandler = async (req, res) => {
     
     const { email, password } = req.body;
 
@@ -64,7 +64,6 @@ export const login: RequestHandler = async (req, res) => {
                 username: user.username
             }
         }
-
 
         const token = jwt.sign(
                 payload, 

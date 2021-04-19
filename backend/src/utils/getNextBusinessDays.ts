@@ -1,5 +1,5 @@
-const moment = require('moment');
-const clientAxios = require('../configs/axios');
+import moment from 'moment';
+import clientAxios from '../config/axios';
 
 
 const getNextBusinessDays = async () => {
@@ -24,4 +24,4 @@ const getNextBusinessDays = async () => {
     return nextBusinessDays;
 }
 
-module.exports = getNextBusinessDays;
+export default getNextBusinessDays;

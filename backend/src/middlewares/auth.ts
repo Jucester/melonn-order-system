@@ -1,6 +1,7 @@
-const jwt = require('jsonwebtoken');
+import { Request, Response, NextFunction } from 'express';
+import jwt from 'jsonwebtoken';
 
-module.exports = (req, res, next) => {
+export default (req: Request, res: Response, next: NextFunction ) => {
 
     // Authorization
     const authHeader = req.get('Authorization');
@@ -16,7 +17,7 @@ module.exports = (req, res, next) => {
     let checkToken;
 
     try {
-        checkToken = jwt.verify(token, process.env.JWT_KEY);
+        checkToken = jwt.verify(token, process.env.JWT_KEY || 'default_token');
         
         if(!checkToken) {
             const error = new Error('No authenticated');

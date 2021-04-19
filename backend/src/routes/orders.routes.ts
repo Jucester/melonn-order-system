@@ -1,16 +1,16 @@
-const { Router } = require('express');
+import { Router } from 'express';
 const router = Router();
-const { getOrders, getOrder, createOrder, getShippingMethods, deleteOrder } = require('../controllers/orders.controller');
+import { getOrders, createOrder, getShippingMethods } from '../controllers/orders.controller';
 
 // Middlewares
-const authorization = require('../middlewares/auth');
+import authorization from '../middlewares/auth';
 
 router.get('/shipping', getShippingMethods);
 
-router.get('/:userId', authorization, getOrders);
-router.get('/order/:id', authorization, getOrder);
+router.get('/:userId', getOrders);
+//router.get('/order/:id', getOrder);
 
-router.post('/', authorization, createOrder);
-router.delete('/delete/:id', authorization, deleteOrder);
+router.post('/', createOrder);
+//router.delete('/delete/:id', deleteOrder);
 
-module.exports = router;
+export default router;

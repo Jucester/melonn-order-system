@@ -1,28 +1,71 @@
-const { Schema, model } = require('mongoose');
-const bcrypt = require('bcrypt');
+import { Schema, model, Document } from 'mongoose';
 
-const OrdersSchema = Schema({
-    username: {
+export interface IOrder extends Document {
+    userId: string,
+    sellerStore: string,
+    shippingMethod: number,
+    externalNumber: string,
+    buyerName: string,
+    buyerPhone: string,
+    buyerEmail: string,
+    shippingAddress: string,
+    shippingCity: string,
+    shippingRegion: string,
+    shippingCountry: string,
+    lineItems: string[],
+}
+
+const OrdersSchema = new Schema({
+    userId: {
         type: String,
         required: true,
         trim: true
     },
-    email: {
+    sellerStore: {
         type: String,
         required: true,
-        unique: true,
-        trim: true,
     },
-    password: {
+    shippingMethod: {
+        type: Number,
+        required: true,
+    },
+    externalOrder: {
+        type: String,
+        required: true
+    },
+    buyerName: {
         type: String,
         required: true,
-        trim: true
     },
-    created_at: {
-        type: Date,
-        default: Date.now
-    }
+    buyerPhone: {
+        type: String,
+        required: true,
+    },
+    buyerEmail: {
+        type: String,
+        required: true,
+    },
+    shippingAddress: {
+        type: String,
+        required: true,
+    },
+    shippingCity: {
+        type: String,
+        required: true,
+    },
+    shippingRegion: {
+        type: String,
+        required: true,
+    },
+    shippingCountry: {
+        type: String,
+        required: true,
+    },
+    lineItems: {
+        type: Array,
+        required: true,
+    },
 });
 
 
-module.exports = model('orders', OrdersSchema);
+export default model<IOrder>("Order", OrdersSchema);
